@@ -3,17 +3,28 @@ package com.qinhaihang.cityselectordemo;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.ListView;
 
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+//NetURL.getCityDataURL
+//mParams.put(Param.UUID,uuid);
+//        mParams.put("SupCity", supCity);
+//        mParams.put("CityLev", String.valueOf(cityLev));
+
 public class CitySelectActivity extends AppCompatActivity {
+
+    @BindView(R.id.lv_city)
+    ListView lv_city;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_city_select);
         ButterKnife.bind(this);
+
     }
 
     @Override

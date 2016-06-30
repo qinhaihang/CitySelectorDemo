@@ -14,6 +14,7 @@
         android:background="#fff">
 
         <RelativeLayout
+            android:id="@+id/rl_selector_title"
             android:layout_width="match_parent"
             android:layout_height="50dp">
 
@@ -35,10 +36,50 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="#f2f2f2"
-                android:layout_alignParentBottom="true"/>
+                android:layout_alignParentBottom="true"
+                android:background="#f2f2f2"/>
 
         </RelativeLayout>
+
+        <LinearLayout
+            android:id="@+id/ll_display_city"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_below="@id/rl_selector_title"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tv_selector"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:gravity="center_vertical"
+                android:text="请选择"/>
+
+        </LinearLayout>
+
+        <View
+            android:id="@+id/line"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_below="@id/ll_display_city"
+            android:background="#f2f2f2"/>
+
+        <FrameLayout
+            android:id="@+id/fl_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/line">
+
+            <ListView
+                android:id="@+id/lv_city"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+
+        </FrameLayout>
+
 
     </RelativeLayout>
 
