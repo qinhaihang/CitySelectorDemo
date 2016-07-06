@@ -1,20 +1,19 @@
 package com.qinhaihang.cityselectordemo.Utils;
 
-import android.util.Log;
-
-import com.squareup.okhttp.Callback;
-import com.squareup.okhttp.FormEncodingBuilder;
-import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.RequestBody;
-import com.squareup.okhttp.Response;
-
 import java.io.IOException;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.FormBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 /**
  * @author qinhaihang
  * @version $Rev$
- * @time 2016/6/30 23:01
+ * @time 2016/7/5 21:34
  * @des ${TODO}
  * @packgename com.qinhaihang.cityselectordemo.Utils
  * @updateAuthor $Author$
@@ -23,13 +22,13 @@ import java.io.IOException;
  */
 public class OkHttpUtils {
 
-    private static final String TAG = "OkHttpUtils";
-    private static OkHttpUtils mInstance;
-    private final OkHttpClient mOkHttpClient;
+    public static OkHttpUtils mInstance;
+    public OkHttpClient okHttpClient;
+    public OnResultCallback mOnResultCallback;
 
     public OkHttpUtils() {
 
-        mOkHttpClient = new OkHttpClient();
+        okHttpClient = new OkHttpClient();
 
     }
 
@@ -46,33 +45,101 @@ public class OkHttpUtils {
         return mInstance;
     }
 
-    public void post() throws IOException {
 
-        FormEncodingBuilder builder = new FormEncodingBuilder();
-        builder.add("userId","cgy");
-        builder.add("userPass","1");
-        builder.add("userType","cgy");
+    public interface OnResultCallback{
+        void onSuccess(String result);
+        void onError(String error);
+    }
 
-        RequestBody requestBody = builder.build();
+    public void setOnResultCallback(OnResultCallback onResultCallback){
+        mOnResultCallback = onResultCallback;
+    }
 
-        Request request = new Request.Builder()
-                                     .url(NetURl.loginURL)
-                                     .post(requestBody)
-                                     .build();
+    public Request request(String url, RequestBody body){
 
-        mOkHttpClient.newCall(request).enqueue(new Callback() {
+        Request.Builder builder = new Request.Builder();
+        Request request = builder.url(url).post(body).build();
+
+        return request;
+    }
+
+    public RequestBody body(Param... params){
+
+        FormBody.Builder builder = new FormBody.Builder();
+
+        for (Param param : params){
+            builder.add(param.key,param.value);
+        }
+
+        return builder.build();
+    }
+
+    /**
+     * 异步请求
+     * @param url
+     * @param params
+     */
+    public void post(String url,Param... params){
+        RequestBody body = body(params);
+        Request request = request(url, body);
+        enqueue(request);
+    }
+
+    /**
+
+     * 开启异步线程访问网络
+
+     * @param request
+
+     * @param responseCallback
+
+     */
+
+    public void enqueue(Request request, Callback responseCallback){
+
+        okHttpClient.newCall(request).enqueue(responseCallback);
+
+    }
+
+    /**
+
+     * 开启异步线程访问网络, 且不在意返回结果（实现空callback）
+
+     * @param request
+
+     */
+
+    public void enqueue(Request request){
+
+        okHttpClient.newCall(request).enqueue(new Callback() {
+
             @Override
-            public void onFailure(Request request, IOException e) {
-
+            public void onFailure(Call call, IOException e) {
+                String failure = call.request().body().toString();
+                if(null != mOnResultCallback){
+                    mOnResultCallback.onError(failure);
+                }
             }
 
             @Override
-            public void onResponse(Response response) throws IOException {
-                String string = response.body().string();
-                Log.d(TAG,string);
+            public void onResponse(Call call, Response response) throws IOException {
+                String msg = response.body().string();
+                if(null != mOnResultCallback){
+                    mOnResultCallback.onSuccess(msg);
+                }
             }
         });
 
+    }
+
+    public static class Param {
+        String key;
+        String value;
+
+        public Param(String key, String value) {
+            this.key = key;
+            this.value = value;
+        }
     }
 
 }
