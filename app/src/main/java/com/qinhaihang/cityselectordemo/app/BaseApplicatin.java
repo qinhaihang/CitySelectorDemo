@@ -2,6 +2,7 @@ package com.qinhaihang.cityselectordemo.app;
 
 import android.app.Application;
 
+import com.qinhaihang.cityselectordemo.bean.CUserDataBean;
 import com.zhy.http.okhttp.BuildConfig;
 import com.zhy.http.okhttp.OkHttpUtils;
 
@@ -22,6 +23,16 @@ import okhttp3.OkHttpClient;
  * @updateDes ${TODO}
  */
 public class BaseApplicatin extends Application {
+
+    public static CUserDataBean sCUserDataBean;
+
+    public static CUserDataBean getCUserDataBean() {
+        return sCUserDataBean;
+    }
+
+    public static void setCUserDataBean(CUserDataBean CUserDataBean) {
+        sCUserDataBean = CUserDataBean;
+    }
 
     @Override
     public void onCreate() {
