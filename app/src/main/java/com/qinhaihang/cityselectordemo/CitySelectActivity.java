@@ -138,21 +138,35 @@ public class CitySelectActivity extends AppCompatActivity implements NetUtils.On
                 setAddrSelected(provinceList,position);
                 rb_province.setVisibility(View.VISIBLE);
                 rb_province.setText(addrBean.getCityName());
+                rb_city.setVisibility(View.GONE);
+                rb_county.setVisibility(View.GONE);
+                rb_town.setVisibility(View.GONE);
+                rb_selector.setText("请选择");
+                rb_selector.setChecked(true);
                 break;
             case 2:
                 setAddrSelected(cityList,position);
                 rb_city.setVisibility(View.VISIBLE);
                 rb_city.setText(addrBean.getCityName());
+                rb_county.setVisibility(View.GONE);
+                rb_town.setVisibility(View.GONE);
+                rb_selector.setText("请选择");
+                rb_selector.setChecked(true);
                 break;
             case 3:
                 setAddrSelected(countyList,position);
                 rb_county.setVisibility(View.VISIBLE);
                 rb_county.setText(addrBean.getCityName());
+                rb_town.setVisibility(View.GONE);
+                rb_selector.setText("请选择");
+                rb_selector.setChecked(true);
                 break;
             case 4:
                 setAddrSelected(townList,position);
                 rb_town.setVisibility(View.VISIBLE);
                 rb_town.setText(addrBean.getCityName());
+                rb_selector.setText("请选择");
+                rb_selector.setChecked(true);
                 break;
             case 5:
                 setAddrSelected(villageList,position);
@@ -175,31 +189,40 @@ public class CitySelectActivity extends AppCompatActivity implements NetUtils.On
     @Override
     public void onCheckedChanged(RadioGroup group, int checkedId) {
 
-        currentList.clear();
 
-        switch (checkedId){
+    }
+
+    @OnClick({R.id.rb_province,R.id.rb_city,R.id.rb_county,R.id.rb_town,R.id.rb_selector})
+    public void rb_click(View view){
+
+        switch (view.getId()){
             case R.id.rb_province:
                 mCurrentLev = 1;
+                currentList.clear();
                 currentList.addAll(provinceList);
                 break;
 
             case R.id.rb_city:
                 mCurrentLev = 2;
+                currentList.clear();
                 currentList.addAll(cityList);
                 break;
 
             case R.id.rb_county:
-                mCurrentLev = 2;
+                mCurrentLev = 3;
+                currentList.clear();
                 currentList.addAll(countyList);
                 break;
 
             case R.id.rb_town:
-                mCurrentLev = 2;
+                mCurrentLev = 4;
+                currentList.clear();
                 currentList.addAll(townList);
                 break;
 
             case R.id.rb_selector:
-                mCurrentLev = 2;
+                mCurrentLev = 5;
+                currentList.clear();
                 currentList.addAll(villageList);
                 break;
         }
