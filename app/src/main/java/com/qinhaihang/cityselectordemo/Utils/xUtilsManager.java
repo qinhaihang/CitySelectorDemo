@@ -69,8 +69,4 @@ public class xUtilsManager {
 
     }
 
-    public static class Param{
-
-    }
-
 }

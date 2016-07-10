@@ -48,15 +48,95 @@
             android:layout_below="@id/rl_selector_title"
             android:orientation="horizontal">
 
-            <TextView
-                android:id="@+id/tv_selector"
-                android:layout_width="wrap_content"
+            <HorizontalScrollView
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_gravity="center_vertical"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
-                android:gravity="center_vertical"
-                android:text="请选择"/>
+                android:scrollbars="none">
+
+                <RadioGroup
+                    android:id="@+id/rg_addr"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
+
+                    <RadioButton
+                        android:id="@+id/rb_province"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp"
+                        android:background="@null"
+                        android:button="@null"
+                        android:gravity="center_vertical"
+                        android:text="省"
+                        android:textColor="@drawable/rb_text_color_selector"
+                        android:textSize="14sp"
+                        android:visibility="gone"/>
+
+                    <RadioButton
+                        android:id="@+id/rb_city"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp"
+                        android:background="@null"
+                        android:button="@null"
+                        android:gravity="center_vertical"
+                        android:text="市"
+                        android:textColor="@drawable/rb_text_color_selector"
+                        android:textSize="14sp"
+                        android:visibility="gone"/>
+
+                    <RadioButton
+                        android:id="@+id/rb_county"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp"
+                        android:background="@null"
+                        android:button="@null"
+                        android:gravity="center_vertical"
+                        android:text="县"
+                        android:textColor="@drawable/rb_text_color_selector"
+                        android:textSize="14sp"
+                        android:visibility="gone"/>
+
+                    <RadioButton
+                        android:id="@+id/rb_town"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp"
+                        android:background="@null"
+                        android:button="@null"
+                        android:gravity="center_vertical"
+                        android:text="镇"
+                        android:textColor="@drawable/rb_text_color_selector"
+                        android:textSize="14sp"
+                        android:visibility="gone"/>
+
+                    <RadioButton
+                        android:id="@+id/rb_selector"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp"
+                        android:background="@null"
+                        android:button="@null"
+                        android:gravity="center_vertical"
+                        android:text="请选择"
+                        android:checked="true"
+                        android:textColor="@drawable/rb_text_color_selector"
+                        android:textSize="14sp"/>
+
+                </RadioGroup>
+
+            </HorizontalScrollView>
 
         </LinearLayout>
 
@@ -76,7 +156,8 @@
             <ListView
                 android:id="@+id/lv_city"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"/>
+                android:layout_height="match_parent"
+                android:divider="@null"/>
 
         </FrameLayout>
 

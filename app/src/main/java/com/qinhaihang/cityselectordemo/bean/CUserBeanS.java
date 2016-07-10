@@ -1,7 +1,5 @@
 package com.qinhaihang.cityselectordemo.bean;
 
-import java.util.List;
-
 /**
  * Created by qinhh on 16/7/7.
  */
@@ -19,7 +17,15 @@ public class CUserBeanS {
     private String msg;
     private String totalnum;
 
-    private List<CUserDataBean> dataList;
+    private CUserDataBean data;
+
+    public CUserDataBean getData() {
+        return data;
+    }
+
+    public void setData(CUserDataBean data) {
+        this.data = data;
+    }
 
     public String getRet() {
         return ret;
@@ -45,12 +51,5 @@ public class CUserBeanS {
         this.totalnum = totalnum;
     }
 
-    public List<CUserDataBean> getData() {
-        return dataList;
-    }
-
-    public void setData(List<CUserDataBean> dataList) {
-        this.dataList = dataList;
-    }
 
 }

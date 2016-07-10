@@ -2,30 +2,40 @@ package com.qinhaihang.cityselectordemo;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.TextView;
 
-import com.google.gson.Gson;
-import com.qinhaihang.cityselectordemo.Utils.NetURl;
+import com.qinhaihang.cityselectordemo.Utils.NetUtils;
+import com.qinhaihang.cityselectordemo.Utils.StringCallBack;
 import com.qinhaihang.cityselectordemo.Utils.xUtilsManager;
-import com.qinhaihang.cityselectordemo.app.BaseApplicatin;
-import com.qinhaihang.cityselectordemo.bean.CUserBeanS;
-import com.qinhaihang.cityselectordemo.bean.CUserDataBean;
 import com.zhy.http.okhttp.OkHttpUtils;
-import com.zhy.http.okhttp.callback.Callback;
 
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import okhttp3.Call;
-import okhttp3.Response;
 
 
 public class MainActivity extends AppCompatActivity {
 
+    @BindView(R.id.tv_selector)
+    TextView tv_selector;
+
     private static final String TAG = "MainActivity";
     private xUtilsManager mXUtilsManager;
     private OkHttpUtils mOkHttpUtils;
+
+    private Handler mHandler = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            tv_selector.setText((String)msg.obj);
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,66 +43,26 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
-//        mOkHttpUtils = new OkHttpUtils();
-//        mOkHttpUtils.setOnResultCallback(new OkHttpUtils.OnResultCallback() {
-//            @Override
-//            public void onSuccess(String result) {
-//                Log.d(TAG,"onSuccess"+result);
-//            }
-//
-//            @Override
-//            public void onError(String error) {
-//                Log.d(TAG,"onError"+error);
-//            }
-//        });
     }
 
     @OnClick(R.id.rl_selector)
     public void rl_selector(View view){
 
-        OkHttpUtils.post()
-                .url(NetURl.loginURL)
-                .addParams("userId","cgy")
-                .addParams("userPass","1")
-                .addParams("userType","cgy")
-                .build()
-                .execute(new Callback() {
-                    @Override
-                    public Object parseNetworkResponse(Response response, int id) throws Exception {
-
-                        Log.d(TAG,"parseNetworkResponse"+response.body().string());
-
-                        try{
-                            Gson gson = new Gson();
-                            CUserBeanS cUserBeanS = gson.fromJson(response.body().string(), CUserBeanS.class);
-
-                            CUserDataBean cUserDataBean = cUserBeanS.getData();
-                            BaseApplicatin.setCUserDataBean(cUserDataBean);
-
-                        } catch (Exception e){
-                            e.printStackTrace();
-                        }
-
-                        startActivity(new Intent(MainActivity.this,CitySelectActivity.class));
-                        overridePendingTransition(R.anim.city_in_anim,0);
-
-                        return null;
-                    }
-
+        NetUtils.loginURL("cgy", "1", "cgy",
+                new StringCallBack() {
                     @Override
                     public void onError(Call call, Exception e, int id) {
-                        Log.d(TAG,"onError"+e.toString());
+                        Log.d(TAG,e.toString());
                     }
 
                     @Override
-                    public void onResponse(Object response, int id) {
-                        Log.d(TAG,"onResponse"+response);
+                    public void onResponse(String response, int id) {
+                        Log.d(TAG,response);
                     }
                 });
 
-//        OkHttpUtils.Param param = new OkHttpUtils.Param("UserId","cgy");
-//
-//        mOkHttpUtils.post(NetURl.checkUserExists,param);
+        startActivity(new Intent(MainActivity.this,CitySelectActivity.class));
+        overridePendingTransition(R.anim.city_in_anim,0);
 
     }
 
