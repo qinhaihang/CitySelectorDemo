@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -12,7 +13,10 @@ import android.widget.TextView;
 import com.qinhaihang.cityselectordemo.Utils.NetUtils;
 import com.qinhaihang.cityselectordemo.Utils.StringCallBack;
 import com.qinhaihang.cityselectordemo.Utils.xUtilsManager;
+import com.qinhaihang.cityselectordemo.bean.AddrBean;
 import com.zhy.http.okhttp.OkHttpUtils;
+
+import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -36,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
             tv_selector.setText((String)msg.obj);
         }
     };
+    private ArrayList<AddrBean> mSelectedAddrList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,9 +66,32 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
 
-        startActivity(new Intent(MainActivity.this,CitySelectActivity.class));
+        startActivityForResult(new Intent(MainActivity.this,CitySelectActivity.class),0x1001);
         overridePendingTransition(R.anim.city_in_anim,0);
 
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if(resultCode == RESULT_OK){
+            mSelectedAddrList = data.getParcelableArrayListExtra(CitySelectActivity.ADDR_LIST);
+
+            if(null != mSelectedAddrList){
+
+                String addr = "";
+
+                for (AddrBean addrBean : mSelectedAddrList){
+                    addr = addr + addrBean.getCityName();
+                }
+
+                tv_selector.setText("".equals(addr) ? "请选择" : addr);
+            }else{
+                tv_selector.setText("请选择");
+            }
+
+        }
+
+    }
 }
