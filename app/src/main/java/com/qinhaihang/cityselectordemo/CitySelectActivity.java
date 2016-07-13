@@ -3,6 +3,8 @@ package com.qinhaihang.cityselectordemo;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -61,17 +63,38 @@ public class CitySelectActivity extends AppCompatActivity implements NetUtils.On
     private List<AddrBean> villageList = new ArrayList<>();
     private List<AddrBean> currentList = new ArrayList<>();
 
-    private int mCurrentLev = 0;
+    private int mCurrentLev = 1;
     private AddrAdapter mAddrAdapter;
 
     public String mFilterText = "";
     public List<AddrBean> selectedAddrList = new ArrayList<>();
+    public AddrBean[] selectedAddrArray = new AddrBean[5];
+    private AddrBean mProvinceBean;
+    private AddrBean mCityBean;
+    private AddrBean mCountyBean;
+    private AddrBean mTownBean;
+    private AddrBean mVillageBean;
+    private ArrayList<AddrBean> mAddrListTemp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_city_select);
         ButterKnife.bind(this);
+
+        //TODO
+        mAddrListTemp = getIntent().getParcelableArrayListExtra("addrList");
+        checkIsSelected(mAddrListTemp);
+
+        if(null != mAddrListTemp){
+            rb_province.setVisibility(View.VISIBLE);
+            rb_province.setText(mProvinceBean.getCityName());
+            rb_city.setVisibility(View.VISIBLE);
+            rb_county.setVisibility(View.GONE);
+            rb_town.setVisibility(View.GONE);
+            rb_selector.setText("请选择");
+            rb_selector.setChecked(true);
+        }
 
         mAddrAdapter = new AddrAdapter(this, currentList);
         lv_city.setAdapter(mAddrAdapter);
@@ -94,7 +117,7 @@ public class CitySelectActivity extends AppCompatActivity implements NetUtils.On
 
     @OnClick({R.id.rl_top, R.id.iv_close})
     public void back(View view) {
-        setResult(RESULT_OK, new Intent().putParcelableArrayListExtra(ADDR_LIST, (ArrayList<? extends Parcelable>) selectedAddrList));
+        //setResult(RESULT_OK, new Intent().putParcelableArrayListExtra(ADDR_LIST, (ArrayList<? extends Parcelable>) selectedAddrList));
         finish();
         overridePendingTransition(0, R.anim.city_out_anim);
     }
@@ -113,28 +136,49 @@ public class CitySelectActivity extends AppCompatActivity implements NetUtils.On
             currentList.clear();
             currentList.addAll(tempList);
 
-            mAddrAdapter.notifyDataSetChanged();
+            if(null == mAddrListTemp){
+                mAddrAdapter.notifyDataSetChanged();
+            }
 
             switch (mCurrentLev) {
                 case 1:
                     provinceList.clear();
                     provinceList.addAll(tempList);
+                    if(null != mProvinceBean){
+                        mCurrentLev++;
+                        NetUtils.requestAddr(mUuid,mProvinceBean.getCityId(),mCurrentLev,this);
+                    }
                     break;
                 case 2:
                     cityList.clear();
                     cityList.addAll(tempList);
+                    if(null != mCityBean){
+                        mCurrentLev++;
+                        NetUtils.requestAddr(mUuid,mCityBean.getCityId(),mCurrentLev,this);
+                    }
                     break;
                 case 3:
                     countyList.clear();
                     countyList.addAll(tempList);
+                    if(null != mCountyBean){
+                        mCurrentLev++;
+                        NetUtils.requestAddr(mUuid,mCountyBean.getCityId(),mCurrentLev,this);
+                    }
                     break;
                 case 4:
                     townList.clear();
                     townList.addAll(tempList);
+                    if(null != mTownBean){
+                        mCurrentLev++;
+                        NetUtils.requestAddr(mUuid,mTownBean.getCityId(),mCurrentLev,this);
+                    }
                     break;
                 case 5:
                     villageList.clear();
                     villageList.addAll(tempList);
+                    if(null != mVillageBean){
+                        mAddrAdapter.notifyDataSetChanged();
+                    }
                     break;
             }
 
@@ -155,7 +199,8 @@ public class CitySelectActivity extends AppCompatActivity implements NetUtils.On
         AddrBean addrBean = currentList.get(position);
         String cityId = addrBean.getCityId();
 
-        selectedAddrList.add(addrBean);
+        //TODO:还有问题
+//        selectedAddrList.add(addrBean);
 
         switch (mCurrentLev) {
             case 1: //标识选中的省
@@ -167,6 +212,8 @@ public class CitySelectActivity extends AppCompatActivity implements NetUtils.On
                 rb_town.setVisibility(View.GONE);
                 rb_selector.setText("请选择");
                 rb_selector.setChecked(true);
+//                selectedAddrList.add(addrBean);
+                selectedAddrArray[0] = addrBean;
                 break;
             case 2:
                 setAddrSelected(cityList, position);
@@ -176,6 +223,8 @@ public class CitySelectActivity extends AppCompatActivity implements NetUtils.On
                 rb_town.setVisibility(View.GONE);
                 rb_selector.setText("请选择");
                 rb_selector.setChecked(true);
+
+                selectedAddrArray[1] = addrBean;
                 break;
             case 3:
                 setAddrSelected(countyList, position);
@@ -184,6 +233,7 @@ public class CitySelectActivity extends AppCompatActivity implements NetUtils.On
                 rb_town.setVisibility(View.GONE);
                 rb_selector.setText("请选择");
                 rb_selector.setChecked(true);
+                selectedAddrArray[2] = addrBean;
                 break;
             case 4:
                 setAddrSelected(townList, position);
@@ -191,10 +241,17 @@ public class CitySelectActivity extends AppCompatActivity implements NetUtils.On
                 rb_town.setText(addrBean.getCityName());
                 rb_selector.setText("请选择");
                 rb_selector.setChecked(true);
+                selectedAddrArray[3] = addrBean;
                 break;
             case 5:
                 setAddrSelected(villageList, position);
                 rb_selector.setText(addrBean.getCityName());
+                selectedAddrArray[4] = addrBean;
+
+                for (int i = 0; i < selectedAddrArray.length; i++) {
+                    selectedAddrList.add(selectedAddrArray[i]);
+                }
+
                 setResult(RESULT_OK, new Intent().putParcelableArrayListExtra(ADDR_LIST, (ArrayList<? extends Parcelable>) selectedAddrList));
                 finish();
                 overridePendingTransition(0, R.anim.city_out_anim);
@@ -315,7 +372,6 @@ public class CitySelectActivity extends AppCompatActivity implements NetUtils.On
 
     /**
      * 标志选中的item
-     *
      * @param list
      * @param position
      */
@@ -326,6 +382,27 @@ public class CitySelectActivity extends AppCompatActivity implements NetUtils.On
         }
 
         list.get(position).setIsSelector("1");
+
+    }
+
+    /**
+     * 显示已经选过的
+     * @param list
+     */
+    private void checkIsSelected(List<AddrBean> list){
+
+//        if(null != list && list.size() != 0){
+//            selectedAddrList.clear();
+//            selectedAddrList.addAll(list);
+//        }
+
+        if(null != list && list.size() == 5){
+            mProvinceBean = list.get(0);
+            mCityBean = list.get(1);
+            mCountyBean = list.get(2);
+            mTownBean = list.get(3);
+            mVillageBean = list.get(4);
+        }
 
     }
 

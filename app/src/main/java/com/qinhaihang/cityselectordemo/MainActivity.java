@@ -41,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
         }
     };
     private ArrayList<AddrBean> mSelectedAddrList;
+    private AddrBean[] mSelectedAddrArray = new AddrBean[5];
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,7 +67,13 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
 
-        startActivityForResult(new Intent(MainActivity.this,CitySelectActivity.class),0x1001);
+        Intent intent =  new Intent(MainActivity.this,CitySelectActivity.class);
+
+        if(null != mSelectedAddrList && mSelectedAddrList.size() != 0){
+            intent.putParcelableArrayListExtra("addrList",mSelectedAddrList);
+        }
+
+        startActivityForResult(intent,0x1001);
         overridePendingTransition(R.anim.city_in_anim,0);
 
     }
