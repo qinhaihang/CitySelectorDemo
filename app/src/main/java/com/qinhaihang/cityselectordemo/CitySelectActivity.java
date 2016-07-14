@@ -90,9 +90,12 @@ public class CitySelectActivity extends AppCompatActivity implements NetUtils.On
             rb_province.setVisibility(View.VISIBLE);
             rb_province.setText(mProvinceBean.getCityName());
             rb_city.setVisibility(View.VISIBLE);
-            rb_county.setVisibility(View.GONE);
-            rb_town.setVisibility(View.GONE);
-            rb_selector.setText("请选择");
+            rb_city.setText(mCityBean.getCityName());
+            rb_county.setVisibility(View.VISIBLE);
+            rb_county.setText(mCountyBean.getCityName());
+            rb_town.setVisibility(View.VISIBLE);
+            rb_town.setText(mTownBean.getCityName());
+            rb_selector.setText(mVillageBean.getCityName());
             rb_selector.setChecked(true);
         }
 
@@ -136,10 +139,6 @@ public class CitySelectActivity extends AppCompatActivity implements NetUtils.On
             currentList.clear();
             currentList.addAll(tempList);
 
-            if(null == mAddrListTemp){
-                mAddrAdapter.notifyDataSetChanged();
-            }
-
             switch (mCurrentLev) {
                 case 1:
                     provinceList.clear();
@@ -147,6 +146,8 @@ public class CitySelectActivity extends AppCompatActivity implements NetUtils.On
                     if(null != mProvinceBean){
                         mCurrentLev++;
                         NetUtils.requestAddr(mUuid,mProvinceBean.getCityId(),mCurrentLev,this);
+                        setAddrSelected(provinceList,mProvinceBean.getCityId());
+                        mProvinceBean = null;
                     }
                     break;
                 case 2:
@@ -155,6 +156,8 @@ public class CitySelectActivity extends AppCompatActivity implements NetUtils.On
                     if(null != mCityBean){
                         mCurrentLev++;
                         NetUtils.requestAddr(mUuid,mCityBean.getCityId(),mCurrentLev,this);
+                        setAddrSelected(cityList,mCityBean.getCityId());
+                        mCityBean = null;
                     }
                     break;
                 case 3:
@@ -163,6 +166,8 @@ public class CitySelectActivity extends AppCompatActivity implements NetUtils.On
                     if(null != mCountyBean){
                         mCurrentLev++;
                         NetUtils.requestAddr(mUuid,mCountyBean.getCityId(),mCurrentLev,this);
+                        setAddrSelected(countyList,mCountyBean.getCityId());
+                        mCountyBean = null;
                     }
                     break;
                 case 4:
@@ -171,16 +176,28 @@ public class CitySelectActivity extends AppCompatActivity implements NetUtils.On
                     if(null != mTownBean){
                         mCurrentLev++;
                         NetUtils.requestAddr(mUuid,mTownBean.getCityId(),mCurrentLev,this);
+                        setAddrSelected(townList,mTownBean.getCityId());
+                        mTownBean = null;
                     }
                     break;
                 case 5:
                     villageList.clear();
                     villageList.addAll(tempList);
                     if(null != mVillageBean){
-                        mAddrAdapter.notifyDataSetChanged();
+                        setAddrSelected(villageList,mVillageBean.getCityId());
+                        setAddrSelected(currentList,mVillageBean.getCityId());
+                        mVillageBean = null;
                     }
                     break;
             }
+
+            if(null == mAddrListTemp){
+
+            }else{
+
+            }
+
+            mAddrAdapter.notifyDataSetChanged();
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -386,15 +403,26 @@ public class CitySelectActivity extends AppCompatActivity implements NetUtils.On
     }
 
     /**
+     * 标志选中的item
+     * @param list
+     * @param cityId
+     */
+    private void setAddrSelected(List<AddrBean> list, String cityId){
+
+        for (int i = 0; i < list.size(); i++) {
+
+            if(cityId.equals(list.get(i).getCityId()) ){
+                list.get(i).setIsSelector("1");
+            }
+        }
+
+    }
+
+    /**
      * 显示已经选过的
      * @param list
      */
     private void checkIsSelected(List<AddrBean> list){
-
-//        if(null != list && list.size() != 0){
-//            selectedAddrList.clear();
-//            selectedAddrList.addAll(list);
-//        }
 
         if(null != list && list.size() == 5){
             mProvinceBean = list.get(0);
