@@ -131,8 +131,13 @@ public class CitySelectActivity extends AppCompatActivity implements NetUtils.On
 
         try {
 
-            lv_city.setVisibility(View.VISIBLE);
-            progress_bar.setVisibility(View.GONE);
+            if(null == mAddrListTemp){
+                lv_city.setVisibility(View.VISIBLE);
+                progress_bar.setVisibility(View.GONE);
+            } else{
+                lv_city.setVisibility(View.GONE);
+                progress_bar.setVisibility(View.VISIBLE);
+            }
 
             ArrayList<AddrBean> tempList = (ArrayList<AddrBean>) result;
 
@@ -147,6 +152,7 @@ public class CitySelectActivity extends AppCompatActivity implements NetUtils.On
                         mCurrentLev++;
                         NetUtils.requestAddr(mUuid,mProvinceBean.getCityId(),mCurrentLev,this);
                         setAddrSelected(provinceList,mProvinceBean.getCityId());
+                        selectedAddrArray[0] = mProvinceBean;
                         mProvinceBean = null;
                     }
                     break;
@@ -157,6 +163,7 @@ public class CitySelectActivity extends AppCompatActivity implements NetUtils.On
                         mCurrentLev++;
                         NetUtils.requestAddr(mUuid,mCityBean.getCityId(),mCurrentLev,this);
                         setAddrSelected(cityList,mCityBean.getCityId());
+                        selectedAddrArray[1] = mCityBean;
                         mCityBean = null;
                     }
                     break;
@@ -167,6 +174,7 @@ public class CitySelectActivity extends AppCompatActivity implements NetUtils.On
                         mCurrentLev++;
                         NetUtils.requestAddr(mUuid,mCountyBean.getCityId(),mCurrentLev,this);
                         setAddrSelected(countyList,mCountyBean.getCityId());
+                        selectedAddrArray[2] = mCountyBean;
                         mCountyBean = null;
                     }
                     break;
@@ -177,6 +185,7 @@ public class CitySelectActivity extends AppCompatActivity implements NetUtils.On
                         mCurrentLev++;
                         NetUtils.requestAddr(mUuid,mTownBean.getCityId(),mCurrentLev,this);
                         setAddrSelected(townList,mTownBean.getCityId());
+                        selectedAddrArray[3] = mTownBean;
                         mTownBean = null;
                     }
                     break;
@@ -186,15 +195,12 @@ public class CitySelectActivity extends AppCompatActivity implements NetUtils.On
                     if(null != mVillageBean){
                         setAddrSelected(villageList,mVillageBean.getCityId());
                         setAddrSelected(currentList,mVillageBean.getCityId());
+                        selectedAddrArray[4] = mVillageBean;
                         mVillageBean = null;
+                        lv_city.setVisibility(View.VISIBLE);
+                        progress_bar.setVisibility(View.GONE);
                     }
                     break;
-            }
-
-            if(null == mAddrListTemp){
-
-            }else{
-
             }
 
             mAddrAdapter.notifyDataSetChanged();
@@ -218,6 +224,8 @@ public class CitySelectActivity extends AppCompatActivity implements NetUtils.On
 
         //TODO:还有问题
 //        selectedAddrList.add(addrBean);
+
+        mAddrListTemp = null;
 
         switch (mCurrentLev) {
             case 1: //标识选中的省
